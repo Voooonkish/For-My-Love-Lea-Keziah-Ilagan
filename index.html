@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Lea Keziah Ilagan ❤️</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --pink: #ff4d6d;
+      --soft: #fff0f3;
+      --white: #ffffff;
+      --gold: #d4af37;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
+    /* ================= START SCREEN ================= */
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      text-align: center;
+      transition: opacity 1s ease;
+    }
+
+    .start-btn {
+      font-size: 5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      animation: beat 1s infinite;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    /* ================= FIREWORKS CANVAS ================= */
+    #fireworks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    /* ================= BACKGROUND SLIDESHOW ================= */
+    .bg-slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: black;
+    }
+
+    .bg-slideshow img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .bg-slideshow img.active {
+      opacity: 0.7;
+    }
+
+    .dark-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: -2;
+    }
+
+    /* ================= MAIN CENTER WRAPPER ================= */
+    .center-wrapper {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.96);
+      width: 100%;
+      max-width: 390px;
+      padding: 22px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      backdrop-filter: blur(6px);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* ================= CARD SLIDESHOW ================= */
+    .photo-slideshow {
+      width: 100%;
+      aspect-ratio: 1 / 1.2;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 18px;
+      background: black;
+    }
+
+    .photo-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .photo-slide.active {
+      opacity: 1;
+    }
+
+    .photo-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .caption {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+
+    /* ================= TEXT ================= */
+    h1 {
+      font-size: 1.4rem;
+      margin: 10px 0 6px;
+      color: #333;
+    }
+
+    .typing {
+      font-size: 1.15rem;
+      color: var(--pink);
+      font-weight: 600;
+      min-height: 1.4em;
+      margin-bottom: 16px;
+    }
+
+    /* ================= BUTTONS ================= */
+    .btn-group {
+      position: relative;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+    }
+
+    button {
+      padding: 11px 30px;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    #yesBtn {
+      background: var(--pink);
+      color: white;
+      box-shadow: 0 4px 10px rgba(255,77,109,0.4);
+    }
+
+    #noBtn {
+      background: #eee;
+      color: #555;
+      position: absolute;
+      left: 55%;
+    }
+
+    /* ================= SUCCESS SCREEN ================= */
+    #success-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #fff0f3, #ffe6eb);
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #success-screen .card {
+      animation: pop 0.6s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #success-screen img {
+      width: 240px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    #success-screen h2 {
+      color: var(--pink);
+      font-size: 1.8rem;
+      margin: 8px 0 10px;
+    }
+
+    /* ================= LOVE LETTER MODAL ================= */
+    #letterModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+
+    .letter-box {
+      background: #fffef0;
+      max-width: 520px;
+      width: 100%;
+      padding: 26px;
+      border-radius: 14px;
+      border: 1px solid var(--gold);
+      box-shadow: 0 0 90px rgba(0,0,0,0.55);
+      animation: pop 0.5s ease;
+    }
+
+    .letter-box h2 {
+      font-family: Georgia, serif;
+      color: #b00;
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .letter-box p {
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .close-letter {
+      margin-top: 18px;
+      background: var(--pink);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="start-overlay">
+    <button class="start-btn" onclick="initSite()">❤️</button>
+    <h2 style="color:white; text-shadow:1px 1px 6px rgba(0,0,0,0.25); margin:12px 0 6px;">
+      A Special Gift for Lea Keziah Ilagan
+    </h2>
+    <p style="color:white;">Tap the heart to begin 💌</p>
+  </div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="love.mp3" type="audio/mpeg">
+  </audio>
+
+  <canvas id="fireworks"></canvas>
+
+  <div class="bg-slideshow">
+    <img src="1.jpeg" class="active">
+    <img src="3.jpeg">
+    <img src="4.jpeg">
+    <img src="5.jpeg">
+    <img src="6.jpeg">
+    <img src="7.jpeg">
+    <img src="8.jpeg">
+  </div>
+  <div class="dark-overlay"></div>
+
+  <div class="center-wrapper hidden" id="mainContent">
+    <div class="card" id="mainCard">
+
+      <div class="photo-slideshow">
+        <div class="photo-slide active">
+          <img src="1.jpeg">
+          <div class="caption">The best times with you 🍽️</div>
+        </div>
+        <div class="photo-slide">
+          <img src="2.jpeg">
+          <div class="caption">Always smiling around you 😊</div>
+        </div>
+        <div class="photo-slide">
+          <img src="3.jpeg">
+          <div class="caption">Late night talks 📱</div>
+        </div>
+        <div class="photo-slide">
+          <img src="4.jpeg">
+          <div class="caption">Our silly moments 🤪</div>
+        </div>
+        <div class="photo-slide">
+          <img src="5.jpg">
+          <div class="caption">You look beautiful here ✨</div>
+        </div>
+        <div class="photo-slide">
+          <img src="6.jpeg">
+          <div class="caption">My favorite person ❤️</div>
+        </div>
+        <div class="photo-slide">
+          <img src="7.jpg">
+          <div class="caption">Our adventures 🌊</div>
+        </div>
+        <div class="photo-slide">
+          <img src="8.jpeg">
+          <div class="caption">Looking stunning 👗</div>
+        </div>
+      </div>
+
+      <h1>Will you be my Valentine?</h1>
+      <div class="typing" id="typingText"></div>
+
+      <div class="btn-group">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 🙃</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="success-screen">
+    <div class="card">
+      <img src="6.jpeg" alt="Us">
+      <h2>She said YES! 💍💖</h2>
+      <p>Happy Valentine’s Day, <strong>Lea Keziah Ilagan</strong> 🌹</p>
+      <button onclick="openLetter()" style="background:var(--pink); color:white; border:none; padding:12px 28px; border-radius:30px; cursor:pointer;">
+        Open my letter ✉️
+      </button>
+    </div>
+  </div>
+
+  <div id="letterModal">
+    <div class="letter-box">
+      <h2>To My Love, Lea Keziah ❤️</h2>
+      <p>
+        I wanted to make something special just for you — something that shows how much
+        you truly mean to me. Looking through our photos reminds me how lucky I am to
+        have you by my side.
+        <br><br>
+        From our dinner dates 🍽️ to our late-night calls 📱 and all our silly moments 🤪,
+        every memory with you is my favorite one. You make my days brighter, my smiles
+        wider, and my heart fuller.
+        <br><br>
+        I choose you today, tomorrow, and always.
+        <br><br>
+        With all my love,<br>
+        Your Valentine ❤️
+      </p>
+      <div class="close-letter" onclick="closeLetter()">Close</div>
+    </div>
+  </div>
+
+  <script>
+    const music = document.getElementById("bgMusic");
+    const overlay = document.getElementById("start-overlay");
+    const content = document.getElementById("mainContent");
+    const fireworksCanvas = document.getElementById("fireworks");
+    const ctx = fireworksCanvas.getContext("2d");
+
+    function resizeCanvas() {
+      fireworksCanvas.width = window.innerWidth;
+      fireworksCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function initSite() {
+      // Immediate play call to bypass browser autoplay blocks
+      music.play().catch(e => console.log("Audio play failed", e));
+      
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        overlay.style.display = "none";
+        content.classList.remove("hidden");
+      }, 1000);
+
+      startBgSlideshow();
+      startPhotoSlideshow();
+      startTyping();
+    }
+
+    function startBgSlideshow() {
+      const slides = document.querySelectorAll(".bg-slideshow img");
+      let current = 0;
+      setInterval(() => {
+        slides[current].classList.remove("active");
+        current = (current + 1) % slides.length;
+        slides[current].classList.add("active");
+      }, 4000);
+    }
+
+    function startPhotoSlideshow() {
+      const slides = document.querySelectorAll(".photo-slide");
+      let index = 0;
+      setInterval(() => {
+        slides[index].classList.remove("active");
+        index = (index + 1) % slides.length;
+        slides[index].classList.add("active");
+      }, 3000);
+    }
+
+    const typingEl = document.getElementById("typingText");
+    const typingLines = [
+      "Lea Keziah Ilagan 💖",
+      "You make my heart smile 😊",
+      "My favorite person ❤️",
+      "My forever Valentine 💘"
+    ];
+    let typingIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    function startTyping() {
+      const current = typingLines[typingIndex];
+      if (!deleting) {
+        typingEl.textContent = current.slice(0, ++charIndex);
+        if (charIndex === current.length) {
+          deleting = true;
+          setTimeout(startTyping, 1500); 
+          return;
+        }
+      } else {
+        typingEl.textContent = current.slice(0, --charIndex);
+        if (charIndex === 0) {
+          deleting = false;
+          typingIndex = (typingIndex + 1) % typingLines.length;
+        }
+      }
+      setTimeout(startTyping, deleting ? 50 : 100);
+    }
+
+    const noBtn = document.getElementById("noBtn");
+    noBtn.addEventListener("mouseover", moveNo);
+    noBtn.addEventListener("touchstart", moveNo);
+
+    function moveNo() {
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      const x = Math.random() * (window.innerWidth - btnWidth - 20);
+      const y = Math.random() * (window.innerHeight - btnHeight - 20);
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    }
+
+    document.getElementById("yesBtn").addEventListener("click", handleYes);
+
+    function handleYes() {
+      document.getElementById("mainContent").style.display = "none";
+      document.getElementById("success-screen").style.display = "flex";
+      confetti({
+        particleCount: 220,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ["#ff4d6d", "#ffccd5", "#ffffff"]
+      });
+      startFireworks();
+    }
+
+    function openLetter() {
+      document.getElementById("letterModal").style.display = "flex";
+    }
+
+    function closeLetter() {
+      document.getElementById("letterModal").style.display = "none";
+    }
+
+    let fireworksArr = [];
+    function startFireworks() {
+      setInterval(() => {
+        fireworksArr.push({
+          x: Math.random() * fireworksCanvas.width,
+          y: fireworksCanvas.height,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -(Math.random() * 7 + 8),
+          exploded: false,
+          particles: []
+        });
+      }, 600);
+      animateFireworks();
+    }
+
+    function animateFireworks() {
+      ctx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+      fireworksArr.forEach((fw, i) => {
+        if (!fw.exploded) {
+          fw.x += fw.vx;
+          fw.y += fw.vy;
+          fw.vy += 0.15;
+          ctx.fillStyle = "white";
+          ctx.fillRect(fw.x, fw.y, 3, 3);
+          if (fw.vy >= 0) explode(fw);
+        } else {
+          fw.particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.05;
+            p.life--;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, 2, 2);
+          });
+          fw.particles = fw.particles.filter(p => p.life > 0);
+        }
+      });
+      fireworksArr = fireworksArr.filter(fw => !fw.exploded || fw.particles.length);
+      requestAnimationFrame(animateFireworks);
+    }
+
+    function explode(fw) {
+      fw.exploded = true;
+      const colors = ["#ff4d6d", "#ffb3c1", "#ffffff", "#ffd1dc"];
+      for (let i = 0; i < 40; i++) {
+        fw.particles.push({
+          x: fw.x,
+          y: fw.y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          life: 50,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+  </script>
+</body>
+</html>
